@@ -28,6 +28,7 @@ class Database(BaseModel):
         self.engine_version = kwargs.get("engine_version", None)
         self.default_engine_versions = {"MySQL": "5.6.21",
                                         "mysql": "5.6.21",
+                                        "oracle-se2": "12.1.0.2.v7",
                                         "oracle-se1": "11.2.0.4.v3",
                                         "oracle-se": "11.2.0.4.v3",
                                         "oracle-ee": "11.2.0.4.v3",
@@ -710,6 +711,7 @@ class RDS2Backend(BaseBackend):
     def create_option_group(self, option_group_kwargs):
         option_group_id = option_group_kwargs['name']
         valid_option_group_engines = {'mysql': ['5.6'],
+                                      'oracle-se2': ['12.1'],
                                       'oracle-se1': ['11.2'],
                                       'oracle-se': ['11.2'],
                                       'oracle-ee': ['11.2'],
