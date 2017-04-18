@@ -244,21 +244,21 @@ class RDS2Response(BaseResponse):
         option_group_name = self._get_param('OptionGroupName')
         count = 1
         options_to_include = []
-        while self._get_param('OptionsToInclude.member.{0}.OptionName'.format(count)):
+        while self._get_param('OptionsToInclude.OptionConfiguration.{0}.OptionName'.format(count)):
             options_to_include.append({
-                'Port': self._get_param('OptionsToInclude.member.{0}.Port'.format(count)),
-                'OptionName': self._get_param('OptionsToInclude.member.{0}.OptionName'.format(count)),
-                'DBSecurityGroupMemberships': self._get_param('OptionsToInclude.member.{0}.DBSecurityGroupMemberships'.format(count)),
-                'OptionSettings': self._get_param('OptionsToInclude.member.{0}.OptionSettings'.format(count)),
-                'VpcSecurityGroupMemberships': self._get_param('OptionsToInclude.member.{0}.VpcSecurityGroupMemberships'.format(count))
+                'Port': self._get_param('OptionsToInclude.OptionConfiguration.{0}.Port'.format(count)),
+                'OptionName': self._get_param('OptionsToInclude.OptionConfiguration.{0}.OptionName'.format(count)),
+                'DBSecurityGroupMemberships': self._get_param('OptionsToInclude.OptionConfiguration.{0}.DBSecurityGroupMemberships'.format(count)),
+                'OptionSettings': self._get_param('OptionsToInclude.OptionConfiguration.{0}.OptionSettings'.format(count)),
+                'VpcSecurityGroupMemberships': self._get_param('OptionsToInclude.OptionConfiguration.{0}.VpcSecurityGroupMemberships'.format(count))
             })
             count += 1
 
         count = 1
         options_to_remove = []
-        while self._get_param('OptionsToRemove.member.{0}'.format(count)):
+        while self._get_param('OptionsToRemove.OptionConfiguration.{0}'.format(count)):
             options_to_remove.append(self._get_param(
-                'OptionsToRemove.member.{0}'.format(count)))
+                'OptionsToRemove.OptionConfiguration.{0}'.format(count)))
             count += 1
         apply_immediately = self._get_param('ApplyImmediately')
         option_group = self.backend.modify_option_group(option_group_name,
@@ -323,7 +323,7 @@ class RDS2Response(BaseResponse):
         return template.render(db_parameter_group=db_parameter_group)
 
 
-CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBInstanceResult>
   {{ database.to_xml() }}
   </CreateDBInstanceResult>
@@ -332,7 +332,7 @@ CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="http://rds.amazon
   </ResponseMetadata>
 </CreateDBInstanceResponse>"""
 
-CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBInstanceReadReplicaResult>
   {{ database.to_xml() }}
   </CreateDBInstanceReadReplicaResult>
@@ -341,7 +341,7 @@ CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns
   </ResponseMetadata>
 </CreateDBInstanceReadReplicaResponse>"""
 
-DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBInstancesResult>
     <DBInstances>
     {%- for database in databases -%}
@@ -354,7 +354,7 @@ DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="http://rds.
   </ResponseMetadata>
 </DescribeDBInstancesResponse>"""
 
-MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyDBInstanceResult>
   {{ database.to_xml() }}
   </ModifyDBInstanceResult>
@@ -363,7 +363,7 @@ MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="http://rds.amazon
   </ResponseMetadata>
 </ModifyDBInstanceResponse>"""
 
-REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <RebootDBInstanceResult>
   {{ database.to_xml() }}
   </RebootDBInstanceResult>
@@ -373,7 +373,7 @@ REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="http://rds.amazon
 </RebootDBInstanceResponse>"""
 
 
-DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DeleteDBInstanceResult>
     {{ database.to_xml() }}
   </DeleteDBInstanceResult>
@@ -382,7 +382,7 @@ DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="http://rds.amazon
   </ResponseMetadata>
 </DeleteDBInstanceResponse>"""
 
-CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBSecurityGroupResult>
   {{ security_group.to_xml() }}
   </CreateDBSecurityGroupResult>
@@ -391,7 +391,7 @@ CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="http:/
   </ResponseMetadata>
 </CreateDBSecurityGroupResponse>"""
 
-DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBSecurityGroupsResult>
     <DBSecurityGroups>
     {% for security_group in security_groups %}
@@ -404,13 +404,13 @@ DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="
   </ResponseMetadata>
 </DescribeDBSecurityGroupsResponse>"""
 
-DELETE_SECURITY_GROUP_TEMPLATE = """<DeleteDBSecurityGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_SECURITY_GROUP_TEMPLATE = """<DeleteDBSecurityGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>97e846bd-a77d-11e4-ac58-91351c0f3426</RequestId>
   </ResponseMetadata>
 </DeleteDBSecurityGroupResponse>"""
 
-AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <AuthorizeDBSecurityGroupIngressResult>
   {{ security_group.to_xml() }}
   </AuthorizeDBSecurityGroupIngressResult>
@@ -419,7 +419,7 @@ AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse 
   </ResponseMetadata>
 </AuthorizeDBSecurityGroupIngressResponse>"""
 
-CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBSubnetGroupResult>
   {{ subnet_group.to_xml() }}
   </CreateDBSubnetGroupResult>
@@ -428,7 +428,7 @@ CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="http://rds
   </ResponseMetadata>
 </CreateDBSubnetGroupResponse>"""
 
-DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBSubnetGroupsResult>
     <DBSubnetGroups>
     {% for subnet_group in subnet_groups %}
@@ -441,13 +441,13 @@ DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="http
   </ResponseMetadata>
 </DescribeDBSubnetGroupsResponse>"""
 
-DELETE_SUBNET_GROUP_TEMPLATE = """<DeleteDBSubnetGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_SUBNET_GROUP_TEMPLATE = """<DeleteDBSubnetGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>13785dd5-a7fc-11e4-bb9c-7f371d0859b0</RequestId>
   </ResponseMetadata>
 </DeleteDBSubnetGroupResponse>"""
 
-CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateOptionGroupResult>
   {{ option_group.to_xml() }}
   </CreateOptionGroupResult>
@@ -456,13 +456,13 @@ CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="http://rds.a
   </ResponseMetadata>
 </CreateOptionGroupResponse>"""
 
-DELETE_OPTION_GROUP_TEMPLATE = """<DeleteOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_OPTION_GROUP_TEMPLATE = """<DeleteOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>e2590367-9fa2-11e4-99cf-55e92d41c60e</RequestId>
   </ResponseMetadata>
 </DeleteOptionGroupResponse>"""
 
-DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeOptionGroupsResult>
     <OptionGroupsList>
     {%- for option_group in option_groups -%}
@@ -475,7 +475,7 @@ DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="http://
   </ResponseMetadata>
 </DescribeOptionGroupsResponse>"""
 
-DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeOptionGroupOptionsResult>
     <OptionGroupOptions>
     {%- for option_group_option in option_group_options -%}
@@ -488,7 +488,7 @@ DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse 
   </ResponseMetadata>
 </DescribeOptionGroupOptionsResponse>"""
 
-MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyOptionGroupResult>
     {{ option_group.to_xml() }}
   </ModifyOptionGroupResult>
@@ -497,7 +497,7 @@ MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="http://rds.a
   </ResponseMetadata>
 </ModifyOptionGroupResponse>"""
 
-CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBParameterGroupResult>
     {{ db_parameter_group.to_xml() }}
   </CreateDBParameterGroupResult>
@@ -506,7 +506,7 @@ CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="h
   </ResponseMetadata>
 </CreateDBParameterGroupResponse>"""
 
-DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBParameterGroupsResult>
     <DBParameterGroups>
     {%- for db_parameter_group in db_parameter_groups -%}
@@ -519,7 +519,7 @@ DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xm
   </ResponseMetadata>
 </DescribeDBParameterGroupsResponse>"""
 
-MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyDBParameterGroupResult>
     <DBParameterGroupName>{{ db_parameter_group.name }}</DBParameterGroupName>
   </ModifyDBParameterGroupResult>
@@ -528,13 +528,13 @@ MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="h
   </ResponseMetadata>
 </ModifyDBParameterGroupResponse>"""
 
-DELETE_DB_PARAMETER_GROUP_TEMPLATE = """<DeleteDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_DB_PARAMETER_GROUP_TEMPLATE = """<DeleteDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>cad6c267-ba25-11d3-fe11-33d33a9bb7e3</RequestId>
   </ResponseMetadata>
 </DeleteDBParameterGroupResponse>"""
 
-DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBParametersResult>
     <Parameters>
       {%- for db_parameter_name, db_parameter in db_parameter_group.parameters.items() -%}
@@ -552,7 +552,7 @@ DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="http:/
 </DescribeDBParametersResponse>
 """
 
-LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
+LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
   <ListTagsForResourceResult>
     <TagList>
     {%- for tag in tags -%}
@@ -568,13 +568,13 @@ LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="http://
   </ResponseMetadata>
 </ListTagsForResourceResponse>"""
 
-ADD_TAGS_TO_RESOURCE_TEMPLATE = """<AddTagsToResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
+ADD_TAGS_TO_RESOURCE_TEMPLATE = """<AddTagsToResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
   <ResponseMetadata>
     <RequestId>b194d9ca-a664-11e4-b688-194eaf8658fa</RequestId>
   </ResponseMetadata>
 </AddTagsToResourceResponse>"""
 
-REMOVE_TAGS_FROM_RESOURCE_TEMPLATE = """<RemoveTagsFromResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
+REMOVE_TAGS_FROM_RESOURCE_TEMPLATE = """<RemoveTagsFromResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
   <ResponseMetadata>
     <RequestId>b194d9ca-a664-11e4-b688-194eaf8658fa</RequestId>
   </ResponseMetadata>
