@@ -5,7 +5,7 @@ from moto.core.responses import BaseResponse
 from moto.ec2.models import ec2_backends
 from .models import rds2_backends
 from .exceptions import DBParameterGroupNotFoundError
-
+import pdb
 
 class RDS2Response(BaseResponse):
 
@@ -322,8 +322,29 @@ class RDS2Response(BaseResponse):
         template = self.response_template(DELETE_DB_PARAMETER_GROUP_TEMPLATE)
         return template.render(db_parameter_group=db_parameter_group)
 
+    def restore_db_instance_from_db_snapshot(self):
+        default_engine_versions = {
+            "MySQL": "5.6.21",
+            "mysql": "5.6.21",
+            "oracle-se2": "12.1.0.2.v7",
+            "oracle-se1": "11.2.0.4.v3",
+            "oracle-se": "11.2.0.4.v3",
+            "oracle-ee": "11.2.0.4.v3",
+            "sqlserver-ee": "11.00.2100.60.v1",
+            "sqlserver-se": "11.00.2100.60.v1",
+            "sqlserver-ex": "11.00.2100.60.v1",
+            "sqlserver-web": "11.00.2100.60.v1",
+            "postgres": "9.3.3"
+        }
+        db_kwargs = self._get_db_kwargs()
+        db_engine_version = default_engine_versions[db_kwargs["engine"]]
+        db_kwargs["engine_version"] = db_engine_version
+        db_kwargs["allocated_storage"] = 15
+        database = self.backend.create_database(db_kwargs)
+        template = self.response_template(RESTORE_DB_INSTANCE_FROM_DB_SNAPSHOT_TEMPLATE)
+        return template.render(database=database)
 
-CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBInstanceResult>
   {{ database.to_xml() }}
   </CreateDBInstanceResult>
@@ -332,7 +353,7 @@ CREATE_DATABASE_TEMPLATE = """<CreateDBInstanceResponse xmlns="https://rds.amazo
   </ResponseMetadata>
 </CreateDBInstanceResponse>"""
 
-CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBInstanceReadReplicaResult>
   {{ database.to_xml() }}
   </CreateDBInstanceReadReplicaResult>
@@ -341,7 +362,7 @@ CREATE_DATABASE_REPLICA_TEMPLATE = """<CreateDBInstanceReadReplicaResponse xmlns
   </ResponseMetadata>
 </CreateDBInstanceReadReplicaResponse>"""
 
-DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBInstancesResult>
     <DBInstances>
     {%- for database in databases -%}
@@ -354,7 +375,7 @@ DESCRIBE_DATABASES_TEMPLATE = """<DescribeDBInstancesResponse xmlns="https://rds
   </ResponseMetadata>
 </DescribeDBInstancesResponse>"""
 
-MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyDBInstanceResult>
   {{ database.to_xml() }}
   </ModifyDBInstanceResult>
@@ -363,7 +384,7 @@ MODIFY_DATABASE_TEMPLATE = """<ModifyDBInstanceResponse xmlns="https://rds.amazo
   </ResponseMetadata>
 </ModifyDBInstanceResponse>"""
 
-REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <RebootDBInstanceResult>
   {{ database.to_xml() }}
   </RebootDBInstanceResult>
@@ -373,7 +394,7 @@ REBOOT_DATABASE_TEMPLATE = """<RebootDBInstanceResponse xmlns="https://rds.amazo
 </RebootDBInstanceResponse>"""
 
 
-DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DeleteDBInstanceResult>
     {{ database.to_xml() }}
   </DeleteDBInstanceResult>
@@ -382,7 +403,7 @@ DELETE_DATABASE_TEMPLATE = """<DeleteDBInstanceResponse xmlns="https://rds.amazo
   </ResponseMetadata>
 </DeleteDBInstanceResponse>"""
 
-CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBSecurityGroupResult>
   {{ security_group.to_xml() }}
   </CreateDBSecurityGroupResult>
@@ -391,7 +412,7 @@ CREATE_SECURITY_GROUP_TEMPLATE = """<CreateDBSecurityGroupResponse xmlns="https:
   </ResponseMetadata>
 </CreateDBSecurityGroupResponse>"""
 
-DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBSecurityGroupsResult>
     <DBSecurityGroups>
     {% for security_group in security_groups %}
@@ -404,13 +425,13 @@ DESCRIBE_SECURITY_GROUPS_TEMPLATE = """<DescribeDBSecurityGroupsResponse xmlns="
   </ResponseMetadata>
 </DescribeDBSecurityGroupsResponse>"""
 
-DELETE_SECURITY_GROUP_TEMPLATE = """<DeleteDBSecurityGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_SECURITY_GROUP_TEMPLATE = """<DeleteDBSecurityGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>97e846bd-a77d-11e4-ac58-91351c0f3426</RequestId>
   </ResponseMetadata>
 </DeleteDBSecurityGroupResponse>"""
 
-AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <AuthorizeDBSecurityGroupIngressResult>
   {{ security_group.to_xml() }}
   </AuthorizeDBSecurityGroupIngressResult>
@@ -419,7 +440,7 @@ AUTHORIZE_SECURITY_GROUP_TEMPLATE = """<AuthorizeDBSecurityGroupIngressResponse 
   </ResponseMetadata>
 </AuthorizeDBSecurityGroupIngressResponse>"""
 
-CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBSubnetGroupResult>
   {{ subnet_group.to_xml() }}
   </CreateDBSubnetGroupResult>
@@ -428,7 +449,7 @@ CREATE_SUBNET_GROUP_TEMPLATE = """<CreateDBSubnetGroupResponse xmlns="https://rd
   </ResponseMetadata>
 </CreateDBSubnetGroupResponse>"""
 
-DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBSubnetGroupsResult>
     <DBSubnetGroups>
     {% for subnet_group in subnet_groups %}
@@ -441,13 +462,13 @@ DESCRIBE_SUBNET_GROUPS_TEMPLATE = """<DescribeDBSubnetGroupsResponse xmlns="http
   </ResponseMetadata>
 </DescribeDBSubnetGroupsResponse>"""
 
-DELETE_SUBNET_GROUP_TEMPLATE = """<DeleteDBSubnetGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_SUBNET_GROUP_TEMPLATE = """<DeleteDBSubnetGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>13785dd5-a7fc-11e4-bb9c-7f371d0859b0</RequestId>
   </ResponseMetadata>
 </DeleteDBSubnetGroupResponse>"""
 
-CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateOptionGroupResult>
   {{ option_group.to_xml() }}
   </CreateOptionGroupResult>
@@ -456,13 +477,13 @@ CREATE_OPTION_GROUP_TEMPLATE = """<CreateOptionGroupResponse xmlns="https://rds.
   </ResponseMetadata>
 </CreateOptionGroupResponse>"""
 
-DELETE_OPTION_GROUP_TEMPLATE = """<DeleteOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_OPTION_GROUP_TEMPLATE = """<DeleteOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>e2590367-9fa2-11e4-99cf-55e92d41c60e</RequestId>
   </ResponseMetadata>
 </DeleteOptionGroupResponse>"""
 
-DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeOptionGroupsResult>
     <OptionGroupsList>
     {%- for option_group in option_groups -%}
@@ -475,7 +496,7 @@ DESCRIBE_OPTION_GROUP_TEMPLATE = """<DescribeOptionGroupsResponse xmlns="https:/
   </ResponseMetadata>
 </DescribeOptionGroupsResponse>"""
 
-DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeOptionGroupOptionsResult>
     <OptionGroupOptions>
     {%- for option_group_option in option_group_options -%}
@@ -488,7 +509,7 @@ DESCRIBE_OPTION_GROUP_OPTIONS_TEMPLATE = """<DescribeOptionGroupOptionsResponse 
   </ResponseMetadata>
 </DescribeOptionGroupOptionsResponse>"""
 
-MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyOptionGroupResult>
     {{ option_group.to_xml() }}
   </ModifyOptionGroupResult>
@@ -497,7 +518,7 @@ MODIFY_OPTION_GROUP_TEMPLATE = """<ModifyOptionGroupResponse xmlns="https://rds.
   </ResponseMetadata>
 </ModifyOptionGroupResponse>"""
 
-CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <CreateDBParameterGroupResult>
     {{ db_parameter_group.to_xml() }}
   </CreateDBParameterGroupResult>
@@ -506,7 +527,7 @@ CREATE_DB_PARAMETER_GROUP_TEMPLATE = """<CreateDBParameterGroupResponse xmlns="h
   </ResponseMetadata>
 </CreateDBParameterGroupResponse>"""
 
-DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBParameterGroupsResult>
     <DBParameterGroups>
     {%- for db_parameter_group in db_parameter_groups -%}
@@ -519,7 +540,7 @@ DESCRIBE_DB_PARAMETER_GROUPS_TEMPLATE = """<DescribeDBParameterGroupsResponse xm
   </ResponseMetadata>
 </DescribeDBParameterGroupsResponse>"""
 
-MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ModifyDBParameterGroupResult>
     <DBParameterGroupName>{{ db_parameter_group.name }}</DBParameterGroupName>
   </ModifyDBParameterGroupResult>
@@ -528,13 +549,13 @@ MODIFY_DB_PARAMETER_GROUP_TEMPLATE = """<ModifyDBParameterGroupResponse xmlns="h
   </ResponseMetadata>
 </ModifyDBParameterGroupResponse>"""
 
-DELETE_DB_PARAMETER_GROUP_TEMPLATE = """<DeleteDBParameterGroupResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DELETE_DB_PARAMETER_GROUP_TEMPLATE = """<DeleteDBParameterGroupResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <ResponseMetadata>
     <RequestId>cad6c267-ba25-11d3-fe11-33d33a9bb7e3</RequestId>
   </ResponseMetadata>
 </DeleteDBParameterGroupResponse>"""
 
-DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="https://rds.amazonaws.com/doc/2014-09-01/">
+DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="http://rds.amazonaws.com/doc/2014-09-01/">
   <DescribeDBParametersResult>
     <Parameters>
       {%- for db_parameter_name, db_parameter in db_parameter_group.parameters.items() -%}
@@ -552,7 +573,7 @@ DESCRIBE_DB_PARAMETERS_TEMPLATE = """<DescribeDBParametersResponse xmlns="https:
 </DescribeDBParametersResponse>
 """
 
-LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
+LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
   <ListTagsForResourceResult>
     <TagList>
     {%- for tag in tags -%}
@@ -568,14 +589,61 @@ LIST_TAGS_FOR_RESOURCE_TEMPLATE = """<ListTagsForResourceResponse xmlns="https:/
   </ResponseMetadata>
 </ListTagsForResourceResponse>"""
 
-ADD_TAGS_TO_RESOURCE_TEMPLATE = """<AddTagsToResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
+ADD_TAGS_TO_RESOURCE_TEMPLATE = """<AddTagsToResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
   <ResponseMetadata>
     <RequestId>b194d9ca-a664-11e4-b688-194eaf8658fa</RequestId>
   </ResponseMetadata>
 </AddTagsToResourceResponse>"""
 
-REMOVE_TAGS_FROM_RESOURCE_TEMPLATE = """<RemoveTagsFromResourceResponse xmlns="https://rds.amazonaws.com/doc/2014-10-31/">
+REMOVE_TAGS_FROM_RESOURCE_TEMPLATE = """<RemoveTagsFromResourceResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
   <ResponseMetadata>
     <RequestId>b194d9ca-a664-11e4-b688-194eaf8658fa</RequestId>
   </ResponseMetadata>
 </RemoveTagsFromResourceResponse>"""
+
+RESTORE_DB_INSTANCE_FROM_DB_SNAPSHOT_TEMPLATE = """<RestoreDBInstanceFromDBSnapshotResponse xmlns="http://rds.amazonaws.com/doc/2014-10-31/">
+  <RestoreDBInstanceFromDBSnapshotResult>
+    <DBInstance>
+      <BackupRetentionPeriod>7</BackupRetentionPeriod>
+      <MultiAZ>false</MultiAZ>
+      <DBInstanceStatus>creating</DBInstanceStatus>
+      <VpcSecurityGroups/>
+      <DBInstanceIdentifier>{{ database.db_instance_identifier }}</DBInstanceIdentifier>
+      <PreferredBackupWindow>08:14-08:44</PreferredBackupWindow>
+      <PreferredMaintenanceWindow>fri:04:50-fri:05:20</PreferredMaintenanceWindow>
+      <ReadReplicaDBInstanceIdentifiers/>
+      <Engine>{{ database.engine }}</Engine>
+      <PendingModifiedValues/>
+      <LicenseModel>{{ database.license_model }}</LicenseModel>
+      <EngineVersion>{{database.engine_version}}</EngineVersion>
+      '''<DBParameterGroups>
+        <DBParameterGroup>
+          <ParameterApplyStatus>in-sync</ParameterApplyStatus>
+          <DBParameterGroupName>default.mysql5.6</DBParameterGroupName>
+        </DBParameterGroup>
+      </DBParameterGroups>'''
+      <OptionGroupMemberships>
+        <OptionGroupMembership>
+          <OptionGroupName>{{database.db_option_group_name}}</OptionGroupName>
+          <Status>pending-apply</Status>
+        </OptionGroupMembership>
+      </OptionGroupMemberships>
+      <PubliclyAccessible>{{database.publicly_accessible}}</PubliclyAccessible>
+      '''<DBSecurityGroups>
+        <DBSecurityGroup>
+          <Status>active</Status>
+          <DBSecurityGroupName>default</DBSecurityGroupName>
+        </DBSecurityGroup>
+      </DBSecurityGroups>'''
+      <DBName>{{database.db_instance_identifier}}</DBName>
+      <AutoMinorVersionUpgrade>true</AutoMinorVersionUpgrade>
+      <AllocatedStorage>100</AllocatedStorage>
+      <MasterUsername>myawsuser</MasterUsername>
+      <DBInstanceClass>{{database.db_instance_class}}</DBInstanceClass>
+    </DBInstance>
+  </RestoreDBInstanceFromDBSnapshotResult>
+  <ResponseMetadata>
+    <RequestId>863fd73e-be2b-11d3-855b-576787000e19</RequestId>
+  </ResponseMetadata>
+</RestoreDBInstanceFromDBSnapshotResponse>
+"""

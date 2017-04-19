@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import copy
+import pdb
 
 from collections import defaultdict
 import boto.rds2
@@ -580,6 +581,12 @@ class SubnetGroup(BaseModel):
         backend = rds2_backends[region_name]
         backend.delete_subnet_group(self.subnet_name)
 
+class DBSnapshot(BaseModel):
+     def __init__(self, db_instance_identifier, db_instance_name, tags):
+        self.db_instance_identifier = db_instance_identifier
+        self.db_instance_name = db_instance_name
+        self.tags = tags
+
 
 class RDS2Backend(BaseBackend):
 
@@ -620,15 +627,25 @@ class RDS2Backend(BaseBackend):
         return replica
 
     def describe_databases(self, db_instance_identifier=None):
+        databases = self.databases.values()
         if db_instance_identifier:
             if db_instance_identifier in self.databases:
-                return [self.databases[db_instance_identifier]]
+                database = self.databases[db_instance_identifier]
+                databases = [database]
+                if database.status == "modifying":
+                    db_kwargs = {
+                        "status": "available"
+                    }
+                    db = copy.deepcopy(database)
+                    databases = [db]
+                    database.update(db_kwargs)
             else:
                 raise DBInstanceNotFoundError(db_instance_identifier)
-        return self.databases.values()
+        return databases
 
     def modify_database(self, db_instance_identifier, db_kwargs):
         database = self.describe_databases(db_instance_identifier)[0]
+        db_kwargs["status"] = "modifying"
         database.update(db_kwargs)
         return database
 
@@ -1162,7 +1179,6 @@ class DBParameterGroup(object):
             db_parameter_group_kwargs)
         db_parameter_group.update_parameters(db_parameter_group_parameters)
         return db_parameter_group
-
 
 rds2_backends = dict((region.name, RDS2Backend(region.name))
                      for region in boto.rds2.regions())
