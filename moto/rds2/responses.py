@@ -32,6 +32,7 @@ class RDS2Response(BaseResponse):
             "master_username": self._get_param('MasterUsername'),
             "multi_az": self._get_bool_param("MultiAZ"),
             # OptionGroupName
+            "option_group_name": self._get_param('OptionGroupName'),
             "port": self._get_param('Port'),
             # PreferredBackupWindow
             # PreferredMaintenanceWindow
@@ -340,6 +341,7 @@ class RDS2Response(BaseResponse):
         db_engine_version = default_engine_versions[db_kwargs["engine"]]
         db_kwargs["engine_version"] = db_engine_version
         db_kwargs["allocated_storage"] = 15
+        db_kwargs["db_snapshot_identifier"] = self._get_param('DBSnapshotIdentifier')
         database = self.backend.create_database(db_kwargs)
         template = self.response_template(RESTORE_DB_INSTANCE_FROM_DB_SNAPSHOT_TEMPLATE)
         return template.render(database=database)
