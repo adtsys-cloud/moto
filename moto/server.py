@@ -40,7 +40,7 @@ class DomainDispatcherApplication(object):
 
         for backend_name, backend in BACKENDS.items():
             for url_base in list(backend.values())[0].url_bases:
-                if re.match(url_base, 'https://%s' % host):
+                if re.match(url_base, 'http://%s' % host):
                     return backend_name
 
         raise RuntimeError('Invalid host: "%s"' % host)
@@ -180,7 +180,7 @@ def main(argv=sys.argv[1:]):
     main_app.debug = True
 
     run_simple(args.host, args.port, main_app,
-               threaded=True, use_reloader=args.reload, ssl_context='adhoc', use_debugger=True)
+               threaded=True, use_reloader=args.reload, use_debugger=True)
 
 
 if __name__ == '__main__':
