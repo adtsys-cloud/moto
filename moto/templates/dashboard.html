@@ -89,11 +89,11 @@
                     {{#each this}}
                     <tr>
                         {{#each this}}
-                        <td><b>{{@key}}:</b> {{this}}</td>
+                        <td><b>{{@key}}:</b><br/>{{json this}}</td>
                         {{/each}}
                     </tr>
                     {{else}}
-                    <tr><td>[]</td></tr>
+                    <tr><td>no data was found!</td></tr>
                     {{/each}}
                 </table>
                 </div>
@@ -132,7 +132,6 @@
             return result;
         }
 
-
         flattenAndSortObject = function(obj) {
             if (!$.isPlainObject(obj)) {
                 return obj;
@@ -141,7 +140,7 @@
             var keys = $.map(obj, function(element,index) {return index});
             keys.sort();
             var len = keys.length;
-
+            
             var result = [];
             $.each(keys, function(index, key) {
               var val = obj[key];
@@ -155,6 +154,7 @@
 
             $.getJSON("/moto-api/data.json", function(data) {
                 var source = $('#template').html();
+                Handlebars.registerHelper('json', function (context) { return JSON.stringify(context); });
                 var template = Handlebars.compile(source);
 
                 data = flattenAndSortObject(data);

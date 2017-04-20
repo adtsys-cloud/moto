@@ -53,14 +53,14 @@ class DomainDispatcherApplication(object):
             host = "instance_metadata"
         else:
             host = environ['HTTP_HOST'].split(':')[0]
-        if host == "localhost":
+        if host == "localhost" or "adtsys.com.br" in host:
             # Fall back to parsing auth header to find service
             # ['Credential=sdffdsa', '20170220', 'us-east-1', 'sns', 'aws4_request']
             try:
                 _, _, region, service, _ = environ['HTTP_AUTHORIZATION'].split(",")[0].split()[
                     1].split("/")
             except (KeyError, ValueError):
-                region = 'us-east-1'
+                region = 'sa-east-1'
                 service = 's3'
             if service == 'dynamodb':
                 dynamo_api_version = environ['HTTP_X_AMZ_TARGET'].split("_")[1].split(".")[0]
