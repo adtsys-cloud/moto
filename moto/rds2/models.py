@@ -581,11 +581,11 @@ class SubnetGroup(BaseModel):
         backend = rds2_backends[region_name]
         backend.delete_subnet_group(self.subnet_name)
 
-class DBSnapshot(BaseModel):
+'''class DatabaseSnapshot(BaseModel):
      def __init__(self, db_instance_identifier, db_instance_name, tags):
         self.db_instance_identifier = db_instance_identifier
         self.db_instance_name = db_instance_name
-        self.tags = tags
+        self.tags = tags'''
 
 
 class RDS2Backend(BaseBackend):
@@ -632,20 +632,12 @@ class RDS2Backend(BaseBackend):
             if db_instance_identifier in self.databases:
                 database = self.databases[db_instance_identifier]
                 databases = [database]
-                if database.status == "modifying":
-                    db_kwargs = {
-                        "status": "available"
-                    }
-                    db = copy.deepcopy(database)
-                    databases = [db]
-                    database.update(db_kwargs)
             else:
                 raise DBInstanceNotFoundError(db_instance_identifier)
         return databases
 
     def modify_database(self, db_instance_identifier, db_kwargs):
         database = self.describe_databases(db_instance_identifier)[0]
-        db_kwargs["status"] = "modifying"
         database.update(db_kwargs)
         return database
 

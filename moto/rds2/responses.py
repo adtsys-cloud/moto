@@ -117,11 +117,16 @@ class RDS2Response(BaseResponse):
         db_instance_identifier = self._get_param('DBInstanceIdentifier')
         databases = self.backend.describe_databases(db_instance_identifier)
         template = self.response_template(DESCRIBE_DATABASES_TEMPLATE)
-        return template.render(databases=databases)
+        response = template.render(databases=databases)
+        if len(databases) == 1 and databases[0].status == "modifying":
+          db_kwargs = {"status": "available"}
+          self.backend.modify_database(db_instance_identifier, db_kwargs)
+        return response
 
     def modify_db_instance(self):
         db_instance_identifier = self._get_param('DBInstanceIdentifier')
         db_kwargs = self._get_db_kwargs()
+        db_kwargs["status"] = "modifying"
         database = self.backend.modify_database(
             db_instance_identifier, db_kwargs)
         template = self.response_template(MODIFY_DATABASE_TEMPLATE)
