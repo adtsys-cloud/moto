@@ -8,7 +8,6 @@ from moto.cloudwatch import cloudwatch_backends
 from moto.core import moto_api_backends
 from moto.datapipeline import datapipeline_backends
 from moto.dynamodb import dynamodb_backends
-from moto.dynamodb2 import dynamodb_backends2
 from moto.ec2 import ec2_backends
 from moto.ecs import ecs_backends
 from moto.elb import elb_backends
@@ -36,7 +35,6 @@ BACKENDS = {
     'cloudwatch': cloudwatch_backends,
     'datapipeline': datapipeline_backends,
     'dynamodb': dynamodb_backends,
-    'dynamodb2': dynamodb_backends2,
     'ec2': ec2_backends,
     'ecs': ecs_backends,
     'elb': elb_backends,

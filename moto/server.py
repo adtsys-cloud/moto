@@ -65,9 +65,9 @@ class DomainDispatcherApplication(object):
                 service = 's3'
             if service == 'dynamodb':
                 dynamo_api_version = environ['HTTP_X_AMZ_TARGET'].split("_")[1].split(".")[0]
-                # If Newer API version, use dynamodb2
+                # If Newer API version, use dynamodb
                 if dynamo_api_version > "20111205":
-                    host = "dynamodb2"
+                    host = "dynamodb"
             else:
                 host = "{service}.{region}.amazonaws.com".format(
                     service=service, region=region)
