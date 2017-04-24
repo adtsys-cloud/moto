@@ -6,19 +6,19 @@ import copy
 import warnings
 
 from moto.autoscaling import models as autoscaling_models
-from moto.awslambda import models as lambda_models
-from moto.datapipeline import models as datapipeline_models
+# from moto.awslambda import models as lambda_models
+# from moto.datapipeline import models as datapipeline_models
 from moto.ec2 import models as ec2_models
-from moto.ecs import models as ecs_models
+# from moto.ecs import models as ecs_models
 from moto.elb import models as elb_models
 from moto.iam import models as iam_models
-from moto.kms import models as kms_models
+# from moto.kms import models as kms_models
 from moto.rds import models as rds_models
-from moto.redshift import models as redshift_models
+# from moto.redshift import models as redshift_models
 from moto.route53 import models as route53_models
 from moto.s3 import models as s3_models
-from moto.sns import models as sns_models
-from moto.sqs import models as sqs_models
+# from moto.sns import models as sns_models
+# from moto.sqs import models as sqs_models
 from .utils import random_suffix
 from .exceptions import MissingParameterError, UnformattedGetAttTemplateException, ValidationError
 from boto.cloudformation.stack import Output
@@ -26,7 +26,7 @@ from boto.cloudformation.stack import Output
 MODEL_MAP = {
     "AWS::AutoScaling::AutoScalingGroup": autoscaling_models.FakeAutoScalingGroup,
     "AWS::AutoScaling::LaunchConfiguration": autoscaling_models.FakeLaunchConfiguration,
-    "AWS::Lambda::Function": lambda_models.LambdaFunction,
+    # "AWS::Lambda::Function": lambda_models.LambdaFunction,
     "AWS::EC2::EIP": ec2_models.ElasticAddress,
     "AWS::EC2::Instance": ec2_models.Instance,
     "AWS::EC2::InternetGateway": ec2_models.InternetGateway,
@@ -44,42 +44,42 @@ MODEL_MAP = {
     "AWS::EC2::VPC": ec2_models.VPC,
     "AWS::EC2::VPCGatewayAttachment": ec2_models.VPCGatewayAttachment,
     "AWS::EC2::VPCPeeringConnection": ec2_models.VPCPeeringConnection,
-    "AWS::ECS::Cluster": ecs_models.Cluster,
-    "AWS::ECS::TaskDefinition": ecs_models.TaskDefinition,
-    "AWS::ECS::Service": ecs_models.Service,
+    # "AWS::ECS::Cluster": ecs_models.Cluster,
+    # "AWS::ECS::TaskDefinition": ecs_models.TaskDefinition,
+    # "AWS::ECS::Service": ecs_models.Service,
     "AWS::ElasticLoadBalancing::LoadBalancer": elb_models.FakeLoadBalancer,
-    "AWS::DataPipeline::Pipeline": datapipeline_models.Pipeline,
+    # "AWS::DataPipeline::Pipeline": datapipeline_models.Pipeline,
     "AWS::IAM::InstanceProfile": iam_models.InstanceProfile,
     "AWS::IAM::Role": iam_models.Role,
-    "AWS::KMS::Key": kms_models.Key,
+    # "AWS::KMS::Key": kms_models.Key,
     "AWS::RDS::DBInstance": rds_models.Database,
     "AWS::RDS::DBSecurityGroup": rds_models.SecurityGroup,
     "AWS::RDS::DBSubnetGroup": rds_models.SubnetGroup,
     "AWS::RDS::DBParameterGroup": rds_models.DBParameterGroup,
-    "AWS::Redshift::Cluster": redshift_models.Cluster,
-    "AWS::Redshift::ClusterParameterGroup": redshift_models.ParameterGroup,
-    "AWS::Redshift::ClusterSubnetGroup": redshift_models.SubnetGroup,
+    # "AWS::Redshift::Cluster": redshift_models.Cluster,
+    # "AWS::Redshift::ClusterParameterGroup": redshift_models.ParameterGroup,
+    # "AWS::Redshift::ClusterSubnetGroup": redshift_models.SubnetGroup,
     "AWS::Route53::HealthCheck": route53_models.HealthCheck,
     "AWS::Route53::HostedZone": route53_models.FakeZone,
     "AWS::Route53::RecordSet": route53_models.RecordSet,
     "AWS::Route53::RecordSetGroup": route53_models.RecordSetGroup,
-    "AWS::SNS::Topic": sns_models.Topic,
+    # "AWS::SNS::Topic": sns_models.Topic,
     "AWS::S3::Bucket": s3_models.FakeBucket,
-    "AWS::SQS::Queue": sqs_models.Queue,
+    # "AWS::SQS::Queue": sqs_models.Queue,
 }
 
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-name.html
 NAME_TYPE_MAP = {
-    "AWS::CloudWatch::Alarm": "Alarm",
-    "AWS::DynamoDB::Table": "TableName",
+    # "AWS::CloudWatch::Alarm": "Alarm",
+    # "AWS::DynamoDB::Table": "TableName",
     "AWS::ElastiCache::CacheCluster": "ClusterName",
     "AWS::ElasticBeanstalk::Application": "ApplicationName",
     "AWS::ElasticBeanstalk::Environment": "EnvironmentName",
     "AWS::ElasticLoadBalancing::LoadBalancer": "LoadBalancerName",
     "AWS::RDS::DBInstance": "DBInstanceIdentifier",
     "AWS::S3::Bucket": "BucketName",
-    "AWS::SNS::Topic": "TopicName",
-    "AWS::SQS::Queue": "QueueName"
+    # "AWS::SNS::Topic": "TopicName",
+    # "AWS::SQS::Queue": "QueueName"
 }
 
 # Just ignore these models types for now

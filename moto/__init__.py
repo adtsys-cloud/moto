@@ -5,32 +5,32 @@ import logging
 __title__ = 'moto'
 __version__ = '0.4.31'
 
-from .apigateway import mock_apigateway, mock_apigateway_deprecated  # flake8: noqa
+# from .apigateway import mock_apigateway, mock_apigateway_deprecated  # flake8: noqa
 from .autoscaling import mock_autoscaling, mock_autoscaling_deprecated  # flake8: noqa
-from .awslambda import mock_lambda, mock_lambda_deprecated  # flake8: noqa
+# from .awslambda import mock_lambda, mock_lambda_deprecated  # flake8: noqa
 from .cloudformation import mock_cloudformation, mock_cloudformation_deprecated  # flake8: noqa
-from .cloudwatch import mock_cloudwatch, mock_cloudwatch_deprecated  # flake8: noqa
-from .datapipeline import mock_datapipeline, mock_datapipeline_deprecated  # flake8: noqa
-from .dynamodb import mock_dynamodb, mock_dynamodb_deprecated  # flake8: noqa
+# from .cloudwatch import mock_cloudwatch, mock_cloudwatch_deprecated  # flake8: noqa
+# from .datapipeline import mock_datapipeline, mock_datapipeline_deprecated  # flake8: noqa
+# from .dynamodb import mock_dynamodb, mock_dynamodb_deprecated  # flake8: noqa
 from .ec2 import mock_ec2, mock_ec2_deprecated  # flake8: noqa
-from .ecs import mock_ecs, mock_ecs_deprecated  # flake8: noqa
+# from .ecs import mock_ecs, mock_ecs_deprecated  # flake8: noqa
 from .elb import mock_elb, mock_elb_deprecated  # flake8: noqa
-from .emr import mock_emr, mock_emr_deprecated  # flake8: noqa
-from .events import mock_events  # flake8: noqa
-from .glacier import mock_glacier, mock_glacier_deprecated  # flake8: noqa
-from .opsworks import mock_opsworks, mock_opsworks_deprecated  # flake8: noqa
+# from .emr import mock_emr, mock_emr_deprecated  # flake8: noqa
+# from .events import mock_events  # flake8: noqa
+# from .glacier import mock_glacier, mock_glacier_deprecated  # flake8: noqa
+# from .opsworks import mock_opsworks, mock_opsworks_deprecated  # flake8: noqa
 from .iam import mock_iam, mock_iam_deprecated  # flake8: noqa
-from .kinesis import mock_kinesis, mock_kinesis_deprecated  # flake8: noqa
-from .kms import mock_kms, mock_kms_deprecated  # flake8: noqa
+# from .kinesis import mock_kinesis, mock_kinesis_deprecated  # flake8: noqa
+# from .kms import mock_kms, mock_kms_deprecated  # flake8: noqa
 from .rds import mock_rds, mock_rds_deprecated  # flake8: noqa
-from .redshift import mock_redshift, mock_redshift_deprecated  # flake8: noqa
+# from .redshift import mock_redshift, mock_redshift_deprecated  # flake8: noqa
 from .s3 import mock_s3, mock_s3_deprecated  # flake8: noqa
-from .ses import mock_ses, mock_ses_deprecated  # flake8: noqa
-from .sns import mock_sns, mock_sns_deprecated  # flake8: noqa
-from .sqs import mock_sqs, mock_sqs_deprecated  # flake8: noqa
-from .sts import mock_sts, mock_sts_deprecated  # flake8: noqa
+# from .ses import mock_ses, mock_ses_deprecated  # flake8: noqa
+# from .sns import mock_sns, mock_sns_deprecated  # flake8: noqa
+# from .sqs import mock_sqs, mock_sqs_deprecated  # flake8: noqa
+# from .sts import mock_sts, mock_sts_deprecated  # flake8: noqa
 from .route53 import mock_route53, mock_route53_deprecated  # flake8: noqa
-from .swf import mock_swf, mock_swf_deprecated  # flake8: noqa
+# from .swf import mock_swf, mock_swf_deprecated  # flake8: noqa
 
 
 try:
