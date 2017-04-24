@@ -54,7 +54,7 @@ class DomainDispatcherApplication(object):
             host = "instance_metadata"
         else:
             host = environ['HTTP_HOST'].split(':')[0]
-        if host == "localhost" or "adtsys.com.br" in host:
+        if (host == "localhost") or ("adtsys" in host):
             # Fall back to parsing auth header to find service
             # ['Credential=sdffdsa', '20170220', 'us-east-1', 'sns', 'aws4_request']
             try:
@@ -71,6 +71,8 @@ class DomainDispatcherApplication(object):
             else:
                 host = "{service}.{region}.amazonaws.com".format(
                     service=service, region=region)
+            log = logging.getLogger('werkzeug')
+            log.debug("HOST:{host}")
 
         with self.lock:
             backend = self.get_backend_for_host(host)
