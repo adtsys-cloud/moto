@@ -3,6 +3,7 @@ import json
 import re
 import sys
 import argparse
+import logging
 
 from six.moves.urllib.parse import urlencode
 
@@ -178,9 +179,8 @@ def main(argv=sys.argv[1:]):
     main_app = DomainDispatcherApplication(
         create_backend_app, service=args.service)
     main_app.debug = True
-
-    run_simple(args.host, args.port, main_app,
-               threaded=True, use_reloader=args.reload, use_debugger=True)
+    logging.basicConfig(level=logging.DEBUG)
+    run_simple(args.host, args.port, main_app, threaded=True, use_reloader=args.reload, use_debugger=True)
 
 
 if __name__ == '__main__':
