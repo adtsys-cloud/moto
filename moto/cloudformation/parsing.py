@@ -14,7 +14,6 @@ from moto.elb import models as elb_models
 from moto.iam import models as iam_models
 from moto.kms import models as kms_models
 from moto.rds import models as rds_models
-from moto.rds2 import models as rds2_models
 from moto.redshift import models as redshift_models
 from moto.route53 import models as route53_models
 from moto.s3 import models as s3_models
@@ -56,7 +55,7 @@ MODEL_MAP = {
     "AWS::RDS::DBInstance": rds_models.Database,
     "AWS::RDS::DBSecurityGroup": rds_models.SecurityGroup,
     "AWS::RDS::DBSubnetGroup": rds_models.SubnetGroup,
-    "AWS::RDS::DBParameterGroup": rds2_models.DBParameterGroup,
+    "AWS::RDS::DBParameterGroup": rds_models.DBParameterGroup,
     "AWS::Redshift::Cluster": redshift_models.Cluster,
     "AWS::Redshift::ClusterParameterGroup": redshift_models.ParameterGroup,
     "AWS::Redshift::ClusterSubnetGroup": redshift_models.SubnetGroup,
