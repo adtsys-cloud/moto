@@ -70,7 +70,7 @@ MODEL_MAP = {
 
 # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-name.html
 NAME_TYPE_MAP = {
-    # "AWS::CloudWatch::Alarm": "Alarm",
+    "AWS::CloudWatch::Alarm": "Alarm",
     # "AWS::DynamoDB::Table": "TableName",
     "AWS::ElastiCache::CacheCluster": "ClusterName",
     "AWS::ElasticBeanstalk::Application": "ApplicationName",

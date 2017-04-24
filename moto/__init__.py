@@ -9,7 +9,7 @@ __version__ = '0.4.31'
 from .autoscaling import mock_autoscaling, mock_autoscaling_deprecated  # flake8: noqa
 # from .awslambda import mock_lambda, mock_lambda_deprecated  # flake8: noqa
 from .cloudformation import mock_cloudformation, mock_cloudformation_deprecated  # flake8: noqa
-# from .cloudwatch import mock_cloudwatch, mock_cloudwatch_deprecated  # flake8: noqa
+from .cloudwatch import mock_cloudwatch, mock_cloudwatch_deprecated  # flake8: noqa
 # from .datapipeline import mock_datapipeline, mock_datapipeline_deprecated  # flake8: noqa
 # from .dynamodb import mock_dynamodb, mock_dynamodb_deprecated  # flake8: noqa
 from .ec2 import mock_ec2, mock_ec2_deprecated  # flake8: noqa
