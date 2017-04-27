@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from moto.core.responses import BaseResponse
 from .models import iam_backend, User
-
+import pdb
 
 class IamResponse(BaseResponse):
 
@@ -287,6 +287,22 @@ class IamResponse(BaseResponse):
             policy_document=policy_document
         )
 
+    def get_policy(self):
+        policy_arn = self._get_param('PolicyArn')
+        policy = iam_backend.get_policy(policy_arn)
+        template = self.response_template(GET_POLICY_TEMPLATE)
+        return template.render(
+            policy_name=policy.name,
+            policy_document=policy.document
+        )
+    
+    def attach_user_policy(self):
+        user_name = self._get_param('UserName')
+        policy_arn = self._get_param('PolicyArn')
+        iam_backend.attach_user_policy(policy_arn, user_name)
+        template = self.response_template(GENERIC_EMPTY_TEMPLATE)
+        return template.render(name='AttachUserPolicy')
+
     def list_user_policies(self):
         user_name = self._get_param('UserName')
         policies = iam_backend.list_user_policies(user_name)
@@ -410,6 +426,17 @@ CREATE_POLICY_TEMPLATE = """<CreatePolicyResponse>
     <RequestId>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE</RequestId>
   </ResponseMetadata>
 </CreatePolicyResponse>"""
+
+GET_POLICY_TEMPLATE = """<GetPolicyResponse>
+    <GetPolicyResult>
+      <Policy>
+       <PolicyName>{{ policy_name }}</PolicyName>
+      </Policy>
+    </GetPolicyResult>
+    <ResponseMetadata>
+       <RequestId>7a62c49f-347e-4fc4-9331-6e8eEXAMPLE</RequestId>
+    </ResponseMetadata>
+ </GetPolicyResponse>"""
 
 LIST_ATTACHED_ROLE_POLICIES_TEMPLATE = """<ListAttachedRolePoliciesResponse>
   <ListAttachedRolePoliciesResult>

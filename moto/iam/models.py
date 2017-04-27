@@ -60,6 +60,11 @@ class ManagedPolicy(Policy):
     def attach_to_role(self, role):
         self.attachment_count += 1
         role.managed_policies[self.name] = self
+    
+    def attach_to_user(self, user):
+        self.attachment_count += 1
+        user.put_policy(self.name, self.document)
+        user.attach_policy(self.name)
 
 
 class AWSManagedPolicy(ManagedPolicy):
@@ -266,6 +271,10 @@ class User(BaseModel):
 
     def put_policy(self, policy_name, policy_json):
         self.policies[policy_name] = policy_json
+    
+    def attach_policy(self, policy_name):
+        policy = self.get_policy(policy_name)
+        self.policies[policy_name] = policy['policy_document']
 
     def deactivate_mfa_device(self, serial_number):
         self.mfa_devices.pop(serial_number)
@@ -738,6 +747,21 @@ class IAMBackend(BaseBackend):
     def put_user_policy(self, user_name, policy_name, policy_json):
         user = self.get_user(user_name)
         user.put_policy(policy_name, policy_json)
+
+    def get_policy(self, policy_arn):
+        policy_json = None
+        try:
+            arns = dict((p.arn, p) for p in self.managed_policies.values())
+            policy_json = arns[policy_arn]
+        except KeyError:
+            raise IAMNotFoundException("Policy {0} not found".format(policy_arn))
+
+        return policy_json
+
+    def attach_user_policy(self, policy_arn, user_name):
+        policy = self.get_policy(policy_arn)
+        user = self.get_user(user_name)
+        policy.attach_to_user(user)
 
     def delete_user_policy(self, user_name, policy_name):
         user = self.get_user(user_name)
